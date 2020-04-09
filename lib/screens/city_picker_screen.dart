@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CityPickerScreen extends StatefulWidget {
-  List<String> _cityHistory;
+  final List<String> _cityHistory;
 
   CityPickerScreen(this._cityHistory);
 
@@ -10,8 +10,15 @@ class CityPickerScreen extends StatefulWidget {
 }
 
 class _CityPickerScreenState extends State<CityPickerScreen> {
+  String _cityName;
+  //Navigator.pop(context, _cityName);
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('COVID-19 City picker'),
+        centerTitle: true,
+      ),
+    );
   }
 }

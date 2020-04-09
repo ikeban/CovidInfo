@@ -63,46 +63,73 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
     });
   }
 
+  void _refreshCurrentPosition() async {
+    List<dynamic> weatherAndCovidData =
+        await ApiCallerModel().getWeatherAndCovidForCurrentLocation();
+    updateUiFromData(weatherAndCovidData[0], weatherAndCovidData[1]);
+  }
+
+  void _moveToCityPickerScreen() async {
+    var typedName =
+        await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return CityPickerScreen(_cityNamesHistory);
+    }));
+    if (typedName != null) {
+      List<dynamic> weatherAndCovidData =
+          await ApiCallerModel().getWeatherAndCovidForCityName(typedName);
+      updateUiFromData(weatherAndCovidData[0], weatherAndCovidData[1]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                FlatButton(
-                  onPressed: () async {
-                    List<dynamic> weatherAndCovidData = await ApiCallerModel()
-                        .getWeatherAndCovidForCurrentLocation();
-                    updateUiFromData(
-                        weatherAndCovidData[0], weatherAndCovidData[1]);
-                  },
-                  child: Icon(
-                    Icons.near_me,
-                    size: 50.0,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () async {
-                    var typedName = await Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return CityPickerScreen(_cityNamesHistory);
-                    }));
-                    if (typedName != null) {
-                      //var weatherDataJson =
-                      //await WeatherModel().getCityWeather(typedName);
-                      //updateUi(weatherDataJson);
-                    }
-                  },
-                  child: Icon(
-                    Icons.location_city,
-                    size: 50.0,
-                  ),
-                ),
-              ],
+    return WillPopScope(
+      onWillPop: () {
+        //To block back button from data display screen
+        return new Future(() => false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('COVID-19 info'),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.near_me),
+            onPressed: _refreshCurrentPosition,
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.location_city),
+              onPressed: _moveToCityPickerScreen,
             ),
           ],
+        ),
+        body: Container(
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  FlatButton(
+                    onPressed: () async {
+                      _refreshCurrentPosition();
+                    },
+                    child: Icon(
+                      Icons.near_me,
+                      size: 50.0,
+                    ),
+                  ),
+                  FlatButton(
+                    onPressed: () async {
+                      _moveToCityPickerScreen();
+                    },
+                    child: Icon(
+                      Icons.location_city,
+                      size: 50.0,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
