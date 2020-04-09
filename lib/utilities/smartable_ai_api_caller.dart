@@ -11,8 +11,6 @@ class SmartableAiApiCaller {
         headers: {"Subscription-Key": _smartableAiKey});
     if (res.statusCode == 200) {
       String data = res.body;
-      // TODO remove this debug call
-      print(data);
       return json.decode(data);
     } else {
       print(res.statusCode);
