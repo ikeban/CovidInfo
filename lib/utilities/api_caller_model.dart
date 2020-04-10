@@ -14,7 +14,7 @@ class ApiCallerModel {
 
   Future<List<dynamic>> getWeatherAndCovidForCityName(String cityName) async {
     var weatherDataJson = await WeatherApiCaller().getWeatherForCity(cityName);
-    var covidDataJson = null;
+    var covidDataJson;
     if (weatherDataJson != null) {
       covidDataJson = await SmartableAiApiCaller()
           .getCovidStatsForCountryTag(weatherDataJson["sys"]["country"]);

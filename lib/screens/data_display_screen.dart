@@ -142,10 +142,6 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
                       style: kDisplayTextStyle,
                       children: <TextSpan>[
                         TextSpan(
-                            text: '$_cityName',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        TextSpan(text: ' in '),
-                        TextSpan(
                             text: '${_covidDataParser.countryName}',
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
@@ -162,14 +158,14 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
                           style: TextStyle(color: Colors.redAccent)),
                       TextSpan(
                           text:
-                              "${_covidDataParser.totalConfirmedCases} (${_covidDataParser.newlyConfirmedCases} new)\n\n",
+                              "${_covidDataParser.totalConfirmedCases} (${_covidDataParser.newlyConfirmedCases} new)\n",
                           style: TextStyle(color: Colors.redAccent)),
                       TextSpan(
                           text: "Deaths\n",
                           style: TextStyle(color: Colors.grey)),
                       TextSpan(
                           text:
-                              "${_covidDataParser.totalDeaths} (${_covidDataParser.newDeaths} new)\n\n",
+                              "${_covidDataParser.totalDeaths} (${_covidDataParser.newDeaths} new)\n",
                           style: TextStyle(color: Colors.grey)),
                       TextSpan(
                           text: "Recovered\n",
@@ -178,6 +174,18 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
                           text:
                               "${_covidDataParser.totalRecoveredCases} (${_covidDataParser.newlyRecoveredCases} new)",
                           style: TextStyle(color: Colors.lightGreen)),
+                    ],
+                  ),
+                ),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: kDisplayTextStyle,
+                    children: <TextSpan>[
+                      TextSpan(text: 'Weather in '),
+                      TextSpan(
+                          text: '$_cityName',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
