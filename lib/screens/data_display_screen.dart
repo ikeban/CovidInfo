@@ -2,6 +2,7 @@ import 'package:covidinfo/screens/city_picker_screen.dart';
 import 'package:covidinfo/utilities/api_caller_model.dart';
 import 'package:covidinfo/utilities/weather_model.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
 
@@ -45,6 +46,10 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
   int _temperature;
   String _cityName;
   String _weatherIcon;
+
+  String _statsForString;
+  String _weatherForString;
+
   CovidDataParser _covidDataParser;
   // Maximum only 7 elements in the city names list
   Set<String> _cityNamesHistory = Set.from(["London", "New York", "New Delhi"]);
@@ -52,6 +57,7 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
   @override
   void initState() {
     super.initState();
+    _restoreCityNamesFromPreferences();
     updateUiFromData(widget._locationWeather, widget._covidData);
   }
 
@@ -62,8 +68,12 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
         _temperature = 0;
         _cityName = "";
         _weatherIcon = '🚫️';
+        _statsForString = "Error while getting stats";
+        _weatherForString = "Error";
         return;
       }
+      _statsForString = "Stats for ";
+      _weatherForString = "Weather in ";
       _covidDataParser.parse(covidDataJson);
       _temperature = weatherDataJson['main']['temp'].toInt();
       _cityName = weatherDataJson['name'];
@@ -96,6 +106,33 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
     if (_cityNamesHistory.length > 7) {
       _cityNamesHistory.remove(_cityNamesHistory.first);
     }
+    _saveCityNamesInPreferences(_cityNamesHistory);
+  }
+
+  void _saveCityNamesInPreferences(Set<String> cityNames) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> cityNameList = cityNames.toList();
+    await prefs.setStringList("CityNamesList", cityNameList);
+  }
+
+  void _restoreCityNamesFromPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> cityNameList = prefs.getStringList("CityNamesList");
+    if (cityNameList != null) {
+      _cityNamesHistory = cityNameList.toSet();
+    }
+  }
+
+  String addComma(int number) {
+    String num = number.toString();
+    String result = "";
+    for (int i = 0; i < num.length; i++) {
+      if (i > 0 && i % 3 == 0) {
+        result = ',' + result;
+      }
+      result = num[i] + result;
+    }
+    return result;
   }
 
   @override
@@ -138,7 +175,7 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
                   child: RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      text: 'Stats for ',
+                      text: '$_statsForString',
                       style: kDisplayTextStyle,
                       children: <TextSpan>[
                         TextSpan(
@@ -157,22 +194,28 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
                           text: "Confirmed\n",
                           style: TextStyle(color: Colors.redAccent)),
                       TextSpan(
-                          text:
-                              "${_covidDataParser.totalConfirmedCases} (${_covidDataParser.newlyConfirmedCases} new)\n",
+                          text: addComma(_covidDataParser.totalConfirmedCases) +
+                              " (" +
+                              addComma(_covidDataParser.newlyConfirmedCases) +
+                              " new)\n",
                           style: TextStyle(color: Colors.redAccent)),
                       TextSpan(
                           text: "Deaths\n",
                           style: TextStyle(color: Colors.grey)),
                       TextSpan(
-                          text:
-                              "${_covidDataParser.totalDeaths} (${_covidDataParser.newDeaths} new)\n",
+                          text: addComma(_covidDataParser.totalDeaths) +
+                              " (" +
+                              addComma(_covidDataParser.newDeaths) +
+                              " new)\n",
                           style: TextStyle(color: Colors.grey)),
                       TextSpan(
                           text: "Recovered\n",
                           style: TextStyle(color: Colors.lightGreen)),
                       TextSpan(
-                          text:
-                              "${_covidDataParser.totalRecoveredCases} (${_covidDataParser.newlyRecoveredCases} new)",
+                          text: addComma(_covidDataParser.totalRecoveredCases) +
+                              " (" +
+                              addComma(_covidDataParser.newlyRecoveredCases) +
+                              " new)",
                           style: TextStyle(color: Colors.lightGreen)),
                     ],
                   ),
@@ -182,7 +225,7 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
                   text: TextSpan(
                     style: kDisplayTextStyle,
                     children: <TextSpan>[
-                      TextSpan(text: 'Weather in '),
+                      TextSpan(text: '$_weatherForString'),
                       TextSpan(
                           text: '$_cityName',
                           style: TextStyle(fontWeight: FontWeight.bold)),
