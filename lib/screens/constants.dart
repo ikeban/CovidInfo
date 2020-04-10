@@ -20,16 +20,20 @@ const kButtonTextStyle = TextStyle(
 
 const kDisplayTextStyle = TextStyle(
   fontSize: 30.0,
+  fontFamily: "Lato",
 );
 
 const kBiggerFontTextStyle = TextStyle(
   fontSize: 20.0,
+  fontFamily: "Lato",
 );
 
 const kTempTextStyle = TextStyle(
   fontSize: 100.0,
+  fontFamily: "Lato",
 );
 
 const kWeatherIconTextStyle = TextStyle(
   fontSize: 100.0,
+  fontFamily: "Lato",
 );

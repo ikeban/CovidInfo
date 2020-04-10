@@ -68,7 +68,7 @@ class _CityPickerScreenState extends State<CityPickerScreen> {
               ),
               Text(
                 "Get statistics:",
-                style: TextStyle(fontSize: 30.0),
+                style: kButtonTextStyle,
               ),
               Container(
                 padding: EdgeInsets.all(20.0),
