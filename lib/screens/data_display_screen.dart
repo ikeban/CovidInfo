@@ -2,6 +2,7 @@ import 'package:covidinfo/screens/city_picker_screen.dart';
 import 'package:covidinfo/utilities/api_caller_model.dart';
 import 'package:covidinfo/utilities/weather_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
@@ -43,6 +44,7 @@ class CovidDataParser {
 }
 
 class _DataDisplayScreenState extends State<DataDisplayScreen> {
+  bool _spinningWheelVisible = false;
   int _temperature;
   String _cityName;
   String _weatherIcon;
@@ -70,6 +72,7 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
         _weatherIcon = '🚫️';
         _statsForString = "Error while getting stats";
         _weatherForString = "Error";
+        _spinningWheelVisible = false;
         return;
       }
       _statsForString = "Stats for ";
@@ -79,10 +82,14 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
       _cityName = weatherDataJson['name'];
       int weatherConditionId = weatherDataJson['weather'][0]['id'];
       _weatherIcon = WeatherModel().getWeatherIcon(weatherConditionId);
+      _spinningWheelVisible = false;
     });
   }
 
   void _refreshCurrentPosition() async {
+    setState(() {
+      _spinningWheelVisible = true;
+    });
     List<dynamic> weatherAndCovidData =
         await ApiCallerModel().getWeatherAndCovidForCurrentLocation();
     updateUiFromData(weatherAndCovidData[0], weatherAndCovidData[1]);
@@ -94,6 +101,9 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
       return CityPickerScreen(_cityNamesHistory);
     }));
     if (typedName != null) {
+      setState(() {
+        _spinningWheelVisible = true;
+      });
       addCityNameToSet(typedName);
       List<dynamic> weatherAndCovidData =
           await ApiCallerModel().getWeatherAndCovidForCityName(typedName);
@@ -146,9 +156,20 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
         appBar: AppBar(
           title: Text('COVID-19 info'),
           centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.near_me),
-            onPressed: _refreshCurrentPosition,
+          leading: Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.near_me),
+                onPressed: _refreshCurrentPosition,
+              ),
+              Visibility(
+                visible: _spinningWheelVisible,
+                child: SpinKitDoubleBounce(
+                  color: Colors.white,
+                  size: 8.0,
+                ),
+              ),
+            ],
           ),
           actions: <Widget>[
             IconButton(
