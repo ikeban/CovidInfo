@@ -43,6 +43,21 @@ class CovidDataParser {
   }
 }
 
+class CommaAdder {
+  String addComma(int number) {
+    String num = number.toString();
+    String result = "";
+    for (int i = 0; i < num.length; i++) {
+      int index = num.length - 1 - i;
+      if (i > 0 && i % 3 == 0) {
+        result = ',' + result;
+      }
+      result = num[index] + result;
+    }
+    return result;
+  }
+}
+
 class _DataDisplayScreenState extends State<DataDisplayScreen> {
   bool _spinningWheelVisible = false;
   int _temperature;
@@ -133,18 +148,6 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
     }
   }
 
-  String addComma(int number) {
-    String num = number.toString();
-    String result = "";
-    for (int i = 0; i < num.length; i++) {
-      if (i > 0 && i % 3 == 0) {
-        result = ',' + result;
-      }
-      result = num[i] + result;
-    }
-    return result;
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -215,27 +218,33 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
                           text: "Confirmed\n",
                           style: TextStyle(color: Colors.redAccent)),
                       TextSpan(
-                          text: addComma(_covidDataParser.totalConfirmedCases) +
+                          text: CommaAdder().addComma(
+                                  _covidDataParser.totalConfirmedCases) +
                               " (" +
-                              addComma(_covidDataParser.newlyConfirmedCases) +
+                              CommaAdder().addComma(
+                                  _covidDataParser.newlyConfirmedCases) +
                               " new)\n",
                           style: TextStyle(color: Colors.redAccent)),
                       TextSpan(
                           text: "Deaths\n",
                           style: TextStyle(color: Colors.grey)),
                       TextSpan(
-                          text: addComma(_covidDataParser.totalDeaths) +
+                          text: CommaAdder()
+                                  .addComma(_covidDataParser.totalDeaths) +
                               " (" +
-                              addComma(_covidDataParser.newDeaths) +
+                              CommaAdder()
+                                  .addComma(_covidDataParser.newDeaths) +
                               " new)\n",
                           style: TextStyle(color: Colors.grey)),
                       TextSpan(
                           text: "Recovered\n",
                           style: TextStyle(color: Colors.lightGreen)),
                       TextSpan(
-                          text: addComma(_covidDataParser.totalRecoveredCases) +
+                          text: CommaAdder().addComma(
+                                  _covidDataParser.totalRecoveredCases) +
                               " (" +
-                              addComma(_covidDataParser.newlyRecoveredCases) +
+                              CommaAdder().addComma(
+                                  _covidDataParser.newlyRecoveredCases) +
                               " new)",
                           style: TextStyle(color: Colors.lightGreen)),
                     ],

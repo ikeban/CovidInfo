@@ -20,3 +20,6 @@ In just one look, user can get the most important information.
 It is also possible to get weather and stats for other cities.
 Just type city name in city picker screen.
 To make it as convenient as possible, search history is also available and preserved between application runs.
+
+## WARNING ADDED AFTER CHALLENGE DEADLINE!
+Fixed bug with number printing (they were reversed)
